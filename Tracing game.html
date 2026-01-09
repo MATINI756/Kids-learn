@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kids Fun Learning Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* RESET */
+*{margin:0; padding:0; box-sizing:border-box; font-family:"Comic Sans MS",cursive; scroll-behavior:smooth;}
+
+/* COLORS */
+:root{
+    --pink:#ff4081;
+    --blue:#7dd6ff;
+    --light:#ffffff;
+    --text:#333;
+}
+
+/* BODY */
+body{
+    background:linear-gradient(135deg,#ffecd2,#fcb69f);
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    align-items:center;
+}
+
+/* TOP BAR */
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:60px;
+    background:var(--light);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 15px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    z-index:3000;
+}
+
+.topbar h1, #tp{
+    color:var(--pink);
+    font-weight:bold;
+    font-size:1.5rem;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.hamburger{
+    font-size:28px;
+    cursor:pointer;
+    padding:5px 10px;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.hamburger:hover{
+    background:var(--pink);
+    color:white;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:60px;
+    left:0;
+    height:100%;
+    width:230px;
+    background:white;
+    padding:20px;
+    box-shadow:3px 0 10px rgba(0,0,0,0.1);
+    transform:translateX(-250px);
+    transition:0.3s;
+    z-index:2000;
+}
+.sidebar.show{transform:translateX(0);}
+.sidebar h2{text-align:center;margin-bottom:15px;color:var(--pink);}
+.sidebar a{
+    display:block;
+    padding:12px 0;
+    font-size:18px;
+    text-decoration:none;
+    color:#333;
+    border-bottom:1px solid #eee;
+    transition:0.3s;
+}
+.sidebar a:hover{padding-left:10px;color:var(--pink);}
+
+/* MAIN CONTENT */
+.content{
+    margin-left:0;
+    padding:100px 20px 20px;
+    width:90%;
+    max-width:900px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+.menu{
+  width: 400px;
+  height:200px;
+
+}
+/* PAGE BOX */
+.page-box{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+/* MENU BUTTONS */
+.menu button{
+  padding:15px 25px;
+  margin:8px;
+  font-size:18px;
+  border:none;
+  border-radius:20px;
+  background:#4caf50;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+.menu button:hover{
+    transform:scale(1.05);
+}
+/* Only for Next and Previous buttons in animals section */
+.animal-nav {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* space between buttons */
+  margin-top: 10px;
+}
+
+.animal-nav button {
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.animal-nav button:hover {
+  background: #45a049;
+}
+
+
+/* GAME BOX */
+.box{
+  background:white;
+  width:100%;
+  max-width:600px;
+  margin:15px 0;
+  padding:20px;
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* CANVAS */
+canvas{
+    border:3px dashed orange;
+    border-radius:10px;
+}
+
+/* STARS/LEVEL */
+.score{
+    font-size:20px;
+    color:#2196f3;
+}
+.star{color:gold;font-size:24px;}
+
+/* COPYRIGHT */
+.footer{
+    position:fixed;
+    bottom:12px;
+    width:100%;
+    text-align:center;
+    font-size:13px;
+    color:black;
+}
+
+/* MOBILE STYLES */
+@media screen and (max-width:768px){
+    .topbar{
+        justify-content:space-between;
+        height:auto;
+        padding:10px 15px;
+    }
+    .topbar h1, #tp{
+        font-size:1.3rem;
+    }
+    .hamburger{
+        font-size:24px;
+        padding:6px 10px;
+    }
+    .sidebar{
+        width:200px;
+    }
+    .content{
+        padding:120px 15px 20px;
+    }
+}
+/* SIDEBAR ALWAYS VISIBLE ON DESKTOP */
+@media (min-width: 900px) {
+    .sidebar {
+        transform: translateX(0);  /* always show sidebar */
+    }
+    .content {
+        margin-left: 230px;        /* leave space for sidebar */
+    }
+    .hamburger {
+        display: none;             /* hide hamburger on desktop */
+    }
+}
+
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div class="hamburger" onclick="toggleSidebar()">☰</div>
+    <p id="tp">KIDZ PLAY</p>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+ <h2>MENU</h2> 
+ <a href="#home">Home</a>
+ <a href="gallery.html">Learn By Making Fun Here</a>
+ <a href="Tracing game.html">Learn By Playing Game</a>
+ <a href="account.html">Create Account</a>
+</div>  
+
+<!-- MAIN CONTENT -->
+<div class="content">
+    <div class="page-box">
+
+<h1>🌈 Kids Fun Learning Game</h1>
+<p class="score">⭐ Stars: <span id="stars">0</span> | 🎯 Level: <span id="level">1</span></p>
+
+<div class="menu">
+  <button onclick="abcGame()">🔤 Alphabet</button>
+  <button onclick="numGame()">🔢 Numbers</button>
+  <button onclick="drawGame()">🎨 Draw</button>
+  <button onclick="animalGame()">🐶 Animal Sounds</button>
+</div>
+
+<div class="box" id="game"></div>
+
+    </div>
+</div>
+
+<footer class="footer">
+  © <span id="year"></span> KIDZ PLAY. All Rights Reserved.
+</footer>
+
+<script>
+// SIDEBAR
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("show");}
+
+// YEAR
+document.getElementById("year").innerText = new Date().getFullYear();
+
+/* ====== GAME LOGIC START ====== */
+let stars=0, level=1, letterIndex=0;
+const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+let currentNumber = 1;
+let currentAnimalIndex = 0;
+let ctx,drawing=false;
+
+const animals = [
+  {name:"Dog", img:"dog.png"},
+  {name:"Cat", img:"cat.png"},
+  {name:"Cow", img:"cow.png"},
+  {name:"Sheep", img:"sheep.png"},
+  {name:"Goat", img:"goat.png"},
+  {name:"Horse", img:"horse.png"},
+  {name:"Lion", img:"lion.png"},
+  {name:"Elephant", img:"elephant.png"},
+  {name:"Giraffe", img:"giraffe.png"},
+  {name:"Bear", img:"bear.png"},
+  {name:"Fox", img:"fox.png"},
+  {name:"Wolf", img:"wolf.png"},
+  {name:"Rabbit", img:"rabbit.png"},
+  {name:"Deer", img:"deer.png"},
+  {name:"Kangaroo", img:"kangaroo.png"},
+  {name:"Panda", img:"panda.png"},
+  {name:"Hen", img:"hen.png"},
+  {name:"Duck", img:"duck.png"},
+  {name:"Parrot", img:"parrot.png"},
+  {name:"Owl", img:"owl.png"},
+  {name:"Peacock", img:"peacock.png"},
+  {name:"Dolphin", img:"dolphin.png"},
+  {name:"Whale", img:"whale.png"},
+  {name:"Shark", img:"shark.png"},
+  {name:"Octopus", img:"octopus.png"},
+  {name:"Turtle", img:"turtle.png"},
+  {name:"Snake", img:"snake.png"},
+  {name:"Frog", img:"frog.png"},
+  {name:"Butterfly", img:"butterfly.png"}
+];
+
+function speak(text){speechSynthesis.speak(new SpeechSynthesisUtterance(text));}
+
+function addStar(){stars++; if(stars%5===0) level++; document.getElementById("stars").innerText=stars; document.getElementById("level").innerText=level;}
+
+function abcGame(){
+  document.getElementById("game").innerHTML=`<h2>Trace the Letter</h2><h1>${letters[letterIndex]}</h1><canvas id="c" width="300" height="200"></canvas><br><button onclick="nextLetter()">Next</button>`;
+  speak(letters[letterIndex]);
+  setupDraw();
+}
+function nextLetter(){addStar(); letterIndex=(letterIndex+1)%letters.length; abcGame();}
+
+function numGame(){
+  document.getElementById("game").innerHTML=`<h2>Count from 1 to 100</h2><h1 id="numDisplay">${currentNumber}</h1><button onclick="speak(currentNumber)">🔊 Hear Number</button><br><br><button onclick="nextNumber()">➡ Next</button>`;
+  speak(currentNumber);
+}
+function nextNumber(){addStar(); currentNumber++; if(currentNumber>100) currentNumber=1; document.getElementById("numDisplay").innerText=currentNumber; speak(currentNumber);}
+
+function animalGame(){currentAnimalIndex=0; showAnimal();}
+function showAnimal() {
+  const animal = animals[currentAnimalIndex];
+  document.getElementById("game").innerHTML = `
+    <h2>Learn Animal Names</h2>
+    <img id="animalImg" src="${animal.img}" alt="${animal.name}" width="200"><br>
+    <h1 id="animalName">${animal.name}</h1>
+    <button onclick="speak('${animal.name}')">🔊 Hear Name </button><br><br>
+    <div class="animal-nav">
+      <button onclick="prevAnimal()">⬅ Previous</button>
+      <button onclick="nextAnimal()">➡ Next</button>
+    </div>
+  `;
+  speak(animal.name);
+}
+
+function nextAnimal(){addStar(); currentAnimalIndex=(currentAnimalIndex+1)%animals.length; showAnimal();}
+function prevAnimal(){addStar(); currentAnimalIndex=(currentAnimalIndex-1+animals.length)%animals.length; showAnimal();}
+
+function drawGame(){
+  document.getElementById("game").innerHTML=`
+  <h2>Creative Drawing Board</h2>
+  <canvas id="c" width="300" height="250"></canvas><br>
+
+  <div id="tools" style="margin:10px 0;">
+    <button onclick="setPaint()" style="background:#4caf50;">🎨 Paint</button>
+    <button onclick="setEraser()" style="background:#f44336;">🩹 Eraser</button>
+  </div>
+<div id="colors" style="display:none; margin-bottom:10px;">
+  <button onclick="setColor('#000000')" style="background:#000;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#ffffff')" style="background:#fff;border:1px solid #999;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#ff0000')" style="background:#f00;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#ff5722')" style="background:#ff5722;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#ff9800')" style="background:#ff9800;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#ffc107')" style="background:#ffc107;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#ffeb3b')" style="background:#ffeb3b;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#cddc39')" style="background:#cddc39;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#4caf50')" style="background:#4caf50;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#009688')" style="background:#009688;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#03a9f4')" style="background:#03a9f4;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#2196f3')" style="background:#2196f3;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#3f51b5')" style="background:#3f51b5;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#673ab7')" style="background:#673ab7;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#9c27b0')" style="background:#9c27b0;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#e91e63')" style="background:#e91e63;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#795548')" style="background:#795548;width:26px;height:26px;border-radius:50%;"></button>
+  <button onclick="setColor('#607d8b')" style="background:#607d8b;width:26px;height:26px;border-radius:50%;"></button>
+</div>
+
+
+
+  <button onclick="addStar()" style="background:#ffc107;color:black;">⭐ Save Star</button>
+  <button onclick="clearCanvas()" style="background:#607d8b;">🧹 Clear Canvas</button>
+  `;
+  setupDraw();
+}
+
+let eraseMode = false;
+
+function setPaint(){
+  eraseMode = false;
+  document.getElementById("colors").style.display="block";
+}
+
+function setEraser(){
+  eraseMode = true;
+  document.getElementById("colors").style.display="none";
+}
+
+let currentColor = "#000000";
+
+function setColor(col){
+  currentColor = col;
+}
+
+
+function setupDraw(){
+  const c=document.getElementById("c");
+  ctx=c.getContext("2d");
+  ctx.lineCap="round";
+
+  c.onmousedown=e=>{
+    drawing=true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX,e.offsetY);
+  };
+
+  c.onmouseup=()=>drawing=false;
+
+  c.onmousemove=e=>{
+    if(!drawing) return;
+
+    if(eraseMode){
+      ctx.globalCompositeOperation="destination-out";
+      ctx.lineWidth=18;
+    }else{
+      ctx.globalCompositeOperation="source-over";
+      ctx.lineWidth=4;
+      ctx.strokeStyle = currentColor;
+    }
+
+    ctx.lineTo(e.offsetX,e.offsetY);
+    ctx.stroke();
+  };
+}
+
+
+function clearCanvas(){if(ctx){ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height); ctx.beginPath(); drawing=false;}}
+
+/* ====== GAME LOGIC END ====== */
+</script>
+
+</body>
+</html>

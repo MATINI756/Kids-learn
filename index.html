@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIDZ PLAY</title>
+
+<style>
+/* RESET */
+*{margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; scroll-behavior:smooth;}
+
+/* COLORS */
+:root{
+    --pink:#ff7db8;
+    --blue:#7dd6ff;
+    --light:#ffffff;
+    --text:#333;
+}
+
+/* BODY */
+body{
+    background:linear-gradient(135deg,#FFDEE9,#B5FFFC);
+    background-attachment:fixed;
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    align-items:center; /* center content horizontally */
+}
+
+/* TOP BAR */
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height:60px;
+    background:var(--light);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 15px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    z-index:3000;
+}
+
+.topbar h1, #tp{
+    color:var(--pink);
+    font-weight:bold;
+    font-size:1.5rem;
+}
+
+.hamburger{
+    font-size:28px;
+    cursor:pointer;
+    padding:5px 10px;
+    border-radius:8px;
+    transition:0.3s;
+}
+
+.hamburger:hover{
+    background:var(--pink);
+    color:white;
+}
+
+/* SIDEBAR */
+.sidebar{
+    position:fixed;
+    top:60px;
+    left:0;
+    height:100%;
+    width:230px;
+    background:white;
+    padding:20px;
+    box-shadow:3px 0 10px rgba(0,0,0,0.1);
+    transform:translateX(-250px); /* hidden by default on small screens */
+    transition:0.3s;
+    z-index:2000;
+}
+.sidebar.show{transform:translateX(0);}
+.sidebar h2{text-align:center;margin-bottom:15px;color:var(--pink);}
+.sidebar a{
+    display:block;
+    padding:12px 0;
+    font-size:18px;
+    text-decoration:none;
+    color:#333;
+    border-bottom:1px solid #eee;
+    transition:0.3s;
+}
+.sidebar a:hover{padding-left:10px;color:var(--pink);}
+
+/* MAIN CONTENT */
+.content{
+    margin-left:0;
+    padding:100px 20px 20px;
+    width:80%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+/* PAGE BOX */
+.page-box{
+    background:white;
+    max-width:900px;
+    width:100%;
+    margin:0 auto;
+    padding:20px;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+/* SECTIONS */
+section{
+    margin-bottom:40px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+/* CONTACT */
+.contact-section{margin-top:30px;}
+.contact-icons{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:15px;}
+.icon{
+    padding:12px 18px;
+    border-radius:8px;
+    font-size:18px;
+    text-decoration:none;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    transition:.3s;
+}
+.phone{background:#0077cc;}
+.phone:hover{background:#72caec;}
+.whatsapp{background:#25D366;}
+.whatsapp:hover{background:#1da851;}
+
+/* HEADINGS */
+section h2{font-size:26px;margin-bottom:10px;color:var(--pink);}
+section h1{font-size:2rem;margin-bottom:10px;}
+
+/* COMMENTS */
+#comments form{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    max-width:500px;
+    width:100%;
+    padding:15px;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 3px 12px rgba(0,0,0,0.1);
+    margin:auto;
+}
+#comments input,#comments textarea{
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+#comments button{
+    padding:12px;
+    background:var(--pink);
+    border:none;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    border-radius:10px;
+    transition:0.3s;
+}
+#comments button:hover{background:#ff5ca0;}
+
+/* ABOUT */
+#p1,#p2{font-weight:bold;font-family:'Lucida Sans', sans-serif;}
+#im2{float:right;width:200px;height:200px;margin:10px 0 10px 15px;border-radius:10px;}
+
+/* TUTORS: horizontal layout always */
+.tutors-gallery {
+    display: flex;
+    justify-content: flex-start;   /* align left for scroll effect */
+    gap: 20px;                     /* spacing between cards */
+    flex-wrap: nowrap;             /* NO wrapping */
+    margin-top: 20px;
+    padding: 0 10px;
+    overflow-x: auto;              /* allow horizontal scroll if needed */
+    -webkit-overflow-scrolling: touch; /* smooth scroll on mobile */
+}
+
+.tutor-card {
+    flex: 0 0 auto;                /* don’t shrink below width */
+    width: 200px;                  /* fixed width for consistency */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: #fff;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.tutor-card img {
+    width: 120px;                   /* image size */
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 8px;
+    border: 3px solid var(--pink);
+}
+
+.tutor-card p {
+    font-weight: bold;
+    color: var(--pink);
+    font-size: 1rem;
+}
+
+/* Hover effect */
+.tutor-card:hover {
+    transform: scale(1.05);
+}
+/* SMALL SCREENS */
+@media (max-width: 700px) {
+    .tutors-gallery {
+        justify-content: flex-start; /* left-align cards */
+        padding: 0 5px;
+    }
+}
+
+@media (max-width: 500px) {
+    .tutor-card {
+        width: 150px;              /* shrink cards slightly */
+    }
+    .tutor-card img {
+        width: 100px;              /* shrink images */
+        height: 100px;
+    }
+}
+/* SIDEBAR ALWAYS VISIBLE ON DESKTOP */
+@media (min-width: 900px) {
+    .sidebar {
+        transform: translateX(0);  /* show sidebar */
+    }
+    .content {
+        margin-left: 230px;        /* leave space for sidebar */
+    }
+    .hamburger {
+        display: none;             /* hide hamburger on desktop */
+    }
+}
+/* copyright */
+.footer{
+    position:fixed;
+    bottom:12px;
+    width:100%;
+    text-align:center;
+    font-size:13px;
+    color: black;
+}
+
+
+</style>
+
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+    <div class="hamburger" onclick="toggleSidebar()">☰</div>
+    <p id="tp">KIDZ PLAY</p>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+ <h2>MENU</h2> 
+ <a href="#home">Home</a>
+ <a href="gallery.html">Learn By Making Fun Here</a>
+ <a href="#contact">Contact</a>
+ <a href="#comments">Comments</a>
+ <a href="Tracing game.html">Learn By Playing Game</a>
+ <a href="account.html">Create Account</a>
+</div>  
+
+<!-- MAIN CONTENT -->
+<div class="content">
+    <div class="page-box">
+
+    <!-- HOME -->
+    <section id="home">
+        <h1>WELCOME TO KIDZ PLAY</h1>
+        <p>Where learning becomes fun and exciting!</p>
+    </section>
+
+   
+    <!-- DESCRIPTION -->
+    <section id="discribtion">
+        <h2>Discribtion</h2>
+
+<p id="p1">KIDS PLAY provides the best foundation for early learning.</p>
+
+<p id="p2">
+Welcome to Our Fun Learning World for Kids!
+Welcome to a colorful, exciting, and interactive learning website created especially for young children who are just beginning their educational journey.<br><br>
+Our goal is simple: to make learning fun, easy, and joyful for every child.
+We believe that children learn best when they are happy, curious, and engaged. That is why this website is designed with bright colors, playful sounds, friendly characters, and easy-to-use activities that help kids learn through fun and discovery.
+</p><br><br>
+
+<h2>✏️ What Children Will Learn</h2>
+<p>
+Our website helps children build strong early learning skills such as:
+🔤 <strong>Alphabet Tracing & Letter Recognition</strong>
+Kids can trace A–Z with their fingers or mouse while listening to the correct pronunciation of each letter.
+🔢 <strong>Number Learning & Counting</strong>
+Fun games help children recognize numbers, count objects, and understand simple math concepts.
+🧠 <strong>Memory & Thinking Games</strong>
+Interactive puzzles improve concentration, memory, and problem-solving skills.
+🎨 <strong>Creative Activities</strong>
+Coloring pages, drawing tools, and shape games allow children to express their creativity.
+🔊 <strong>Sound & Pronunciation Practice</strong>
+Each letter and number comes with friendly audio so kids can learn how to pronounce them correctly.
+</p><br><br>
+
+<h2>💡 Why Parents Love Our Website</h2>
+<p>
+✅ Safe and child-friendly environment
+✅ Simple navigation for small hands
+✅ No complicated menus or confusing steps
+✅ Supports learning at home and in school
+✅ Works on computers, tablets, and phones
+Parents and teachers can relax knowing that their children are learning in a positive and supportive space.
+</p><br><br>
+
+<h2>🚀 Our Mission</h2>
+<p>
+Our mission is to help every child build a strong foundation for the future by turning learning into an adventure.<br>
+We want children to feel confident, excited, and proud of their progress every time they use our website.
+</p><br><br>
+
+<h2>💖 Thank You for Choosing Us</h2>
+<p>
+Thank you for trusting us with your child’s learning journey.
+Together, we can make education fun, meaningful, and unforgettable.
+Let the fun begin — happy learning! 🌟
+</p>
+
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="contact-section">
+            <h2>Contact Us</h2>
+            <div class="contact-icons">
+                <a href="tel:+233256425051" class="icon phone">📞 Call Us</a>
+                <a href="https://wa.me/233256425051" target="_blank" class="icon whatsapp">💬 WhatsApp Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMENTS -->
+    <section id="comments">
+        <h2>Comments</h2>
+        <form id="commentForm">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="comment" rows="4" placeholder="Your Comment" required></textarea>
+            <button type="submit">Submit Comment</button>
+        </form>
+        <div id="commentList"></div>
+    </section>
+
+    <!-- TUTORS -->
+    <section id="tutors">
+        <h2 class="h22">Page Producer</h2>
+        <div class="tutors-gallery">
+            <div class="tutor-card">
+                <img src="image1.jpg" alt="Tutor 1">
+                <p>Mr. MATINI</p>
+            </div>
+
+        </div>
+    </section>
+    
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="mediaModal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-content" id="modalContent"></div>
+</div>
+<footer class="footer">
+  © <span id="year"></span> KIDZ PLAY. All Rights Reserved.
+</footer>
+
+<script>
+
+// SIDEBAR
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("show");}
+
+// MODAL
+function closeModal(){document.getElementById("mediaModal").style.display="none";}
+document.getElementById("year").innerText = new Date().getFullYear();
+
+</script>
+
+</body>
+</html>

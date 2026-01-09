@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Account System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+.popup{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    visibility:hidden;
+    opacity:0;
+    transition:.3s;
+    z-index:999;
+}
+
+.popup.show{
+    visibility:visible;
+    opacity:1;
+}
+
+.popup-content{
+    background:#fff;
+    padding:30px;
+    width:90%;
+    max-width:320px;
+    border-radius:16px;
+    text-align:center;
+    animation:pop .4s ease;
+}
+
+@keyframes pop{
+    from{transform:scale(.7);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+.check{
+    width:60px;
+    height:60px;
+    background:linear-gradient(135deg,#36d1dc,#5b86e5);
+    color:#fff;
+    font-size:32px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:50%;
+    margin:0 auto 15px;
+}
+
+.popup-content button{
+    margin-top:15px;
+    background:linear-gradient(135deg,#36d1dc,#5b86e5);
+}
+
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Poppins,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+      radial-gradient(circle at 10% 20%, rgba(255,0,150,.15), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,200,255,.18), transparent 40%),
+      linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+
+.box{
+    background:rgba(255,255,255,.95);
+    padding:35px 30px;
+    width:92%;
+    max-width:400px;
+    border-radius:16px;
+    box-shadow:0 25px 60px rgba(0,0,0,.4);
+    display:none;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+input,button{
+    width:100%;
+    padding:13px;
+    margin:10px 0;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:15px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#2c5364;
+}
+
+button{
+    background:linear-gradient(135deg,#36d1dc,#5b86e5);
+    color:#fff;
+    border:none;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.03);
+}
+
+.link{
+    text-align:center;
+    font-size:14px;
+}
+
+.link a{
+    color:#5b86e5;
+    text-decoration:none;
+    font-weight:600;
+}
+
+@media(max-width:500px){
+    .box{
+        padding:25px 20px;
+    }
+}
+/* copyright */
+.footer{
+    position:fixed;
+    bottom:12px;
+    width:100%;
+    text-align:center;
+    font-size:13px;
+    color:black;
+}
+
+</style>
+
+</head>
+<body>
+<!-- SUCCESS POPUP -->
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <div class="check">✓</div>
+    <h3 id="popupText">Success!</h3>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<!-- SIGNUP -->
+<div class="box" id="signupBox">
+<h2>Create Account</h2>
+<input id="sName" placeholder="Full Name">
+<input id="sEmail" placeholder="Email">
+<input id="sPass" type="password" placeholder="Password">
+<button onclick="signup()">Create Account</button>
+<div class="link">Already have account? <a href="#" onclick="showLogin()">Login</a></div>
+</div>
+
+<!-- LOGIN -->
+<div class="box" id="loginBox">
+<h2>Login</h2>
+<input id="lEmail" placeholder="Email">
+<input id="lPass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<div class="link">No account? <a href="#" onclick="showSignup()">Create one</a></div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="box" id="dashBox">
+<h2 id="welcome"></h2>
+<button onclick="logout()" style="background:red;">Logout</button>
+</div>
+<footer class="footer">
+  © <span id="year"></span> KIDZ PLAY. All Rights Reserved.
+</footer>
+
+<script>
+let signupBox=document.getElementById("signupBox");
+let loginBox=document.getElementById("loginBox");
+let dashBox=document.getElementById("dashBox");
+let popup=document.getElementById("popup");
+let popupText=document.getElementById("popupText");
+let welcome=document.getElementById("welcome");
+
+function showSignup(){
+    signupBox.style.display="block";
+    loginBox.style.display="none";
+    dashBox.style.display="none";
+}
+
+function showLogin(){
+    signupBox.style.display="none";
+    loginBox.style.display="block";
+    dashBox.style.display="none";
+}
+
+function showDash(){
+    signupBox.style.display="none";
+    loginBox.style.display="none";
+    dashBox.style.display="block";
+
+    let user=JSON.parse(localStorage.getItem("user"));
+    if(user){
+        welcome.innerText="Welcome, "+user.name;
+    }
+}
+
+/* ALWAYS start with login page */
+showLogin();
+
+function signup(){
+    let user={name:sName.value,email:sEmail.value,pass:sPass.value};
+    localStorage.setItem("user",JSON.stringify(user));
+    localStorage.setItem("loggedIn","true");
+    showPopup("Account created successfully 🎉");
+}
+
+function login(){
+    let saved=JSON.parse(localStorage.getItem("user"));
+    if(!saved){
+        alert("No account found. Please sign up first.");
+        return;
+    }
+
+    if(lEmail.value===saved.email && lPass.value===saved.pass){
+        localStorage.setItem("loggedIn","true");
+        showPopup("Login successful ✅");
+    }else{
+        alert("Wrong login details");
+    }
+}
+
+function logout(){
+    localStorage.removeItem("loggedIn");
+    showLogin();
+}
+
+function showPopup(msg){
+    popupText.innerText=msg;
+    popup.classList.add("show");
+}
+
+function closePopup(){
+    popup.classList.remove("show");
+    window.location.href = "index.html"; // RETURN TO HOME AFTER LOGIN/SIGNUP
+}
+
+document.getElementById("year").innerText = new Date().getFullYear();
+</script>
+
+
+
+</body>
+</html>
